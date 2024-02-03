@@ -1,119 +1,94 @@
 #!/usr/bin/env python3
-# _*_ coding: utf-8 _*_
+# -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
+import math
 
-
-class Number(ABC):
+class Root(ABC):
     """
-    Абстрактный класс  длячисла
+    Абстрактный базовый класс для корня.
     """
-    def __init__(self, value):
-        self.value = value
 
     @abstractmethod
-    def add(self, other):
+    def calculate(self):
         """
-        Операция сложения
+        Абстрактный метод для вычисления корней.
         """
 
     @abstractmethod
-    def sub(self, other):
+    def display(self):
         """
-        Операция вычитания
-        """
-
-    @abstractmethod
-    def mul(self, other):
-        """
-        Операция умножения
+        Абстрактный метод для вывода результатов на экран.
         """
 
-    @abstractmethod
-    def div(self, other):
-        """
-        Операция деления
-        """
-
-    def __str__(self):
-        return str(self.value)
-
-
-class Integer(Number):
+class Linear(Root):
     """
-    Класс "Целочисленное значение", наследуется от базового класса для всех чисел
+    Класс для линейного уравнения.
     """
-    def __init__(self, value: int):
-        super().__init__(value)
+    def __init__(self):
+        self.a = 0
+        self.b = 0
+        self.root = None
 
-    def add(self, other):
-        self.value = int(self.value + other.value)
+    def read_data(self):
+        self.a = float(input("Введите коэффициент a линейного уравнения (a*x + b = 0): "))
+        self.b = float(input("Введите коэффициент b линейного уравнения (a*x + b = 0): "))
 
-    def sub(self, other):
-        self.value = int(self.value - other.value)
+    def calculate(self):
+        if self.a == 0:
+            if self.b == 0:
+                self.root = "Бесконечное количество решений"
+            else:
+                self.root = "Нет решений"
+        else:
+            self.root = -self.b / self.a
 
-    def mul(self, other):
-        self.value = int(self.value * other.value)
+    def display(self):
+        print(f"Корень линейного уравнения: {self.root}")
 
-    def div(self, other):
-        self.value = int(self.value / other.value)
-
-
-class Real(Number):
+class Square(Root):
     """
-    Класс "Дробное число", наследуется от базового класса для всех чисел
+    Класс для квадратного уравнения.
     """
-    def __init__(self, value: float):
-        super().__init__(value)
+    def __init__(self):
+        self.a = 0
+        self.b = 0
+        self.c = 0
+        self.roots = None
 
-    def add(self, other):
-        self.value = float(self.value + other.value)
+    def read_data(self):
+        self.a = float(input("Введите коэффициент a квадратного уравнения (a*x^2 + b*x + c = 0): "))
+        self.b = float(input("Введите коэффициент b квадратного уравнения (a*x^2 + b*x + c = 0): "))
+        self.c = float(input("Введите коэффициент c квадратного уравнения (a*x^2 + b*x + c = 0): "))
 
-    def sub(self, other):
-        self.value = float(self.value - other.value)
+    def calculate(self):
+        discriminant = self.b**2 - 4*self.a*self.c
+        if discriminant > 0:
+            x1 = (-self.b + math.sqrt(discriminant)) / (2 * self.a)
+            x2 = (-self.b - math.sqrt(discriminant)) / (2 * self.a)
+            self.roots = (x1, x2)
+        elif discriminant == 0:
+            x = -self.b / (2 * self.a)
+            self.roots = (x,)
+        else:
+            self.roots = "Корней нет"
 
-    def mul(self, other):
-        self.value = float(self.value * other.value)
+    def display(self):
+        print(f"Корни квадратного уравнения: {self.roots}")
 
-    def div(self, other):
-        self.value = float(self.value / other.value)
-
+def demonstrate_virtual_call(root_object):
+    """
+    Функция для демонстрации виртуального вызова методов.
+    """
+    root_object.read_data()
+    root_object.calculate()
+    root_object.display()
 
 if __name__ == "__main__":
-    # Создадим число 10
-    int1 = Integer(10)
+    print("Работа с линейным уравнением:")
+    linear_equation = Linear()
+    demonstrate_virtual_call(linear_equation)
 
-    # Добавим к нему число 5
-    int1.add(Integer(5))
-    print(int1)
-
-    # Разделим на 3
-    int1.div(Integer(3))
-    print(int1)
-
-    # Умножим на 5
-    int1.mul(Integer(5))
-    print(int1)
-
-    # Вычтем 10
-    int1.sub(Integer(10))
-    print(int1)
-
-    # Создадим дробное число 10.5
-    real1 = Real(10.5)
-
-    # Добавим к нему другое дробное число 5.5
-    real1.add(Real(5.5))
-    print(real1)
-
-    # Вычтем 3.5
-    real1.sub(Real(3.5))
-    print(real1)
-
-    # Разделим на 2.5
-    real1.div(Real(2.5))
-    print(real1)
-
-    # Умножим на 4.8
-    real1.mul(Real(4.8))
-    print(real1)
+    print("\nРабота с квадратным уравнением:")
+    square_equation = Square()
+    demonstrate_virtual_call(square_equation)
